@@ -9,6 +9,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.socket.config.WebSocketMessageBrokerStats;
 
 import java.security.Principal;
 import java.util.Date;
@@ -25,6 +28,9 @@ public class ChatController {
 
     @Autowired
     private ChatRoomService chatRoomService;
+
+    @Autowired
+    private WebSocketMessageBrokerStats webSocketMessageBrokerStats;
 
     @MessageMapping("/chat")
     public void processMessage(@Payload ChatMessage chatMessage, Principal principal) {
@@ -50,5 +56,10 @@ public class ChatController {
                 )
         );
 
+    }
+
+    @GetMapping("/stats")
+    public @ResponseBody WebSocketMessageBrokerStats showStats() {
+        return webSocketMessageBrokerStats;
     }
 }
