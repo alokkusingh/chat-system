@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.2.0/stomp.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/core.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/sha256.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/enc-base64.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/hmac.js"></script>
+
+    <script type="text/javascript">
+
+        var stompClient = null;
+
+        function setConnected(connected) {
+
+            document.getElementById('connect').disabled = connected;
+            document.getElementById('disconnect').disabled = !connected;
+            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
+            document.getElementById('response').innerHTML = '';
+        }
+
+        function connect() {
+            var socket = new SockJS('/chat-system/ws');
+            stompClient = Stomp.over(socket);
+            var jwtToken = generateJwtToken();
+
+            stompClient.connect({'X-Authorization': jwtToken}, function(frame) {
+
+                setConnected(true);
+                console.log('Connected: ' + frame);
+                var userId = document.getElementById('senderId').value
+                stompClient.subscribe('/user/' + userId + '/queue/messages', function(messageOutput) {
+                    showMessageOutput(JSON.parse(messageOutput.body));
+                });
+            });
+        }
+
+        function disconnect() {
+            if(stompClient != null) {
+                stompClient.disconnect();
+            }
+
+            setConnected(false);
+            console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            var recipientId = document.getElementById('recipientId').value;
+            var content = document.getElementById('content').value;
+            stompClient.send("/app/chat", {}, JSON.stringify({'recipientId':recipientId, 'content':content}));
+            showSelfMessage(content);
+        }
+
+        function showMessageOutput(messageOutput) {
+            var response = document.getElementById('response');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.appendChild(document.createTextNode((new Date(messageOutput.timestamp)).toLocaleString() + " : " + messageOutput.senderName + " : " + messageOutput.content));
+            response.appendChild(p);
+        }
+
+        function showSelfMessage(message) {
+            var response = document.getElementById('response');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.appendChild(document.createTextNode((new Date(Date.now())).toLocaleString() + " : Me : " + message));
+            response.appendChild(p);
+        }
+
+        function generateJwtToken() {
+            var senderId = document.getElementById('senderId').value
+            var iat = Math.round(Date.now() / 1000);
+            var secret = 'secret-key';
+
+            var header = {
+                "alg": "HS256",
+                "typ": "JWT"
+            };
+
+            var data = {
+                "id": senderId,
+                "sub": senderId,
+                "iat": iat,
+                "exp": iat + 3600
+            }
+
+            var stringifiedHeader = CryptoJS.enc.Utf8.parse(JSON.stringify(header));
+            var encodedHeader = base64url(stringifiedHeader);
+
+            var stringifiedData = CryptoJS.enc.Utf8.parse(JSON.stringify(data));
+            var encodedData = base64url(stringifiedData);
+
+            var token = encodedHeader + "." + encodedData;
+
+            var signature = CryptoJS.HmacSHA256(token, secret);
+            signature = base64url(signature);
+            var signedToken = token + "." + signature;
+
+            return signedToken;
+        }
+
+        function base64url(source) {
+            // Encode in classical base64
+            encodedSource = CryptoJS.enc.Base64.stringify(source);
+
+            // Remove padding equal characters
+            encodedSource = encodedSource.replace(/=+$/, '');
+
+            // Replace characters according to base64url specifications
+            encodedSource = encodedSource.replace(/\+/g, '-');
+            encodedSource = encodedSource.replace(/\//g, '_');
+
+            return encodedSource;
+        }
+
+    </script>
+
+</head>
+ <body onload="disconnect()">
+    <div>
+        <div>
+            <input type="text" id="senderId" placeholder="Choose a nickname"/>
+        </div>
+        <br />
+        <div>
+            <input type="text" id="recipientId" placeholder="Send to..."/>
+        </div>
+        <br />
+        <div>
+            <button id="connect" onclick="connect();">Connect</button>
+            <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+        </div>
+        <br />
+        <div id="conversationDiv">
+            <input type="text" id="content" placeholder="Write a message..."/>
+            <button id="sendMessage" onclick="sendMessage();">Send</button>
+            <p id="response"></p>
+        </div>
+    </div>
+ </body>
+ </html>
