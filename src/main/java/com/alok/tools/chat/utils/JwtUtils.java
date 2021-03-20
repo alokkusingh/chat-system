@@ -1,11 +1,11 @@
 package com.alok.tools.chat.utils;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
-
-import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 
@@ -13,12 +13,13 @@ import java.util.function.Function;
 @Component
 public class JwtUtils {
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-
-    @Value("{security.jwt.token.secret-key}")
+    @Value("${security.jwt.token.secret-key}")
     private String secret;
 
     public String getUserNameFromToken(String token) {
+        System.out.println("\n-------------------------------------------------------------\n");
+        System.out.println("Validating User Token!");
+        System.out.println("\n-------------------------------------------------------------\n");
         return getClaimFromToken(token, Claims::getSubject);
     }
 
