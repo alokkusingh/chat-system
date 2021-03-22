@@ -94,7 +94,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         }
     }
 
-    @Bean(initMethod = "start", destroyMethod = "stop")
+    //@Bean(initMethod = "start", destroyMethod = "stop")
     public BrokerService broker() throws Exception {
         final BrokerService broker = new BrokerService();
         broker.addConnector("stomp://localhost:61613");
