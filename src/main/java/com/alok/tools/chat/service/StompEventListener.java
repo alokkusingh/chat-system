@@ -25,12 +25,13 @@ public class StompEventListener implements ApplicationListener<SessionConnectEve
     @EventListener
     public void onSocketConnect(SessionConnectedEvent sessionConnectedEvent) {
         Principal principal = sessionConnectedEvent.getUser();
-        System.out.format("[Connected] %s\n", principal.getName());
+        System.out.format("[Connected] %s\n", principal == null ? null: principal.getName());
     }
 
     @EventListener
     public void onSocketDisconnect(SessionDisconnectEvent sessionDisconnectEvent) {
         Principal principal = sessionDisconnectEvent.getUser();
-        System.out.format("[Disconnected] %s\n", principal.getName());
+        System.out.format("[Disconnected] %s\n", principal == null ? null: principal.getName());
+
     }
 }

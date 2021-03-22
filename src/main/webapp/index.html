@@ -23,6 +23,7 @@
         }
 
         function connect() {
+            console.log("making ws connection");
             var socket = new SockJS('/chat-system/ws');
             stompClient = Stomp.over(socket);
             var jwtToken = generateJwtToken();

@@ -1,12 +1,15 @@
-package com.alok.tools.chat.utils;
+package com.alok.tools.chat.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.function.Function;
 
 
@@ -15,6 +18,14 @@ public class JwtUtils {
 
     @Value("${security.jwt.token.secret-key}")
     private String secret;
+
+    public UsernamePasswordAuthenticationToken getAuthenticatedPrincipal(String token) {
+        return new UsernamePasswordAuthenticationToken(
+                getUserNameFromToken(token),
+                null,
+                Collections.singleton((GrantedAuthority) () -> "USER")
+        );
+    }
 
     public String getUserNameFromToken(String token) {
         System.out.println("\n-------------------------------------------------------------\n");
