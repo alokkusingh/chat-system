@@ -58,7 +58,7 @@ public class ChatController {
 
     }
 
-    @GetMapping("/stats")
+    @GetMapping("/api/stats")
     public @ResponseBody WebSocketMessageBrokerStats showStats() {
         return webSocketMessageBrokerStats;
     }

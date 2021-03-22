@@ -1,12 +1,10 @@
 package com.alok.tools.chat.config;
 
 import com.alok.tools.chat.security.JwtChannelInterceptor;
-import com.alok.tools.chat.security.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.ManagementContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

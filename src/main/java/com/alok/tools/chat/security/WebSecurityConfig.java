@@ -11,12 +11,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .httpBasic().disable()
+                //.httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
                     .antMatchers("/ws", "/ws/**", "/index.html", "/")
                     .permitAll()
-                .anyRequest().denyAll();
+                .and()
+                .authorizeRequests()
+                    .antMatchers("/api/**")
+                    .authenticated()
+                    .and()
+                    .httpBasic();
+                //.and()
+                //.anyRequest().denyAll();
     }
 }
