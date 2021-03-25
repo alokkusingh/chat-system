@@ -21,21 +21,21 @@ public class ChatRoomService {
                 .orElseGet(() -> createChatId(senderId, recipientId, createIfNotExist)));
     }
 
-    private String createChatId(String senderId, String receipientId, boolean createIfNotExist) {
+    private String createChatId(String senderId, String recipientId, boolean createIfNotExist) {
         if (!createIfNotExist)
             return null;
 
-        String chatId = String.format("%s_%s", senderId, receipientId);
+        String chatId = String.format("%s_%s", senderId, recipientId);
 
         ChatRoom senderRecipient = ChatRoom.builder()
                 .chatId(chatId)
                 .senderId(senderId)
-                .recipientId(receipientId)
+                .recipientId(recipientId)
                 .build();
 
         ChatRoom recipientSender = ChatRoom.builder()
                 .chatId(chatId)
-                .senderId(receipientId)
+                .senderId(recipientId)
                 .recipientId(senderId)
                 .build();
 

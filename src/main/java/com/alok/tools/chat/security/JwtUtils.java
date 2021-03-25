@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -22,7 +21,7 @@ public class JwtUtils {
         return new UsernamePasswordAuthenticationToken(
                 getUserNameFromToken(token),
                 null,
-                Collections.singleton((GrantedAuthority) () -> "USER")
+                Collections.singleton(() -> "USER")
         );
     }
 

@@ -20,7 +20,7 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
 
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (StompCommand.CONNECT == accessor.getCommand()) {
+        if (accessor != null && StompCommand.CONNECT == accessor.getCommand()) {
             String jwtToken = accessor.getFirstNativeHeader("X-Authorization");
             accessor.removeHeader("X-Authorization");
 

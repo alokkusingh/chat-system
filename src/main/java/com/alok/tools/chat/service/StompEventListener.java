@@ -19,7 +19,7 @@ public class StompEventListener implements ApplicationListener<SessionConnectEve
         StompHeaderAccessor stompHeaderAccessor = StompHeaderAccessor.wrap(sessionConnectEvent.getMessage());
 
         System.out.format("Command: %s, session id: %s, user id: %s\n",
-                stompHeaderAccessor.getCommand(), stompHeaderAccessor.getSessionId(), principal.getName());
+                stompHeaderAccessor.getCommand(), stompHeaderAccessor.getSessionId(), principal == null ? null:principal.getName());
     }
 
     @EventListener
